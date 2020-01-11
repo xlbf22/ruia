@@ -1,0 +1,5 @@
+/outfiles/*
+!/outfiles/lastline.log
+svc.log
+/src/.vs
+/src/obj
