@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-from ruia import Request, Spider, utils, Item, Middleware, AttrField, TextField
+from ruia import Spider, utils, Item, Middleware, AttrField, TextField
+from ruia_pyppeteer import PyppeteerRequest as Request
 
 log = utils.log.get_logger()
 
@@ -51,12 +52,14 @@ class HitomiPageSpider(Spider):
 
     async def parse(self, response):
         for index, url in enumerate(self.start_urls):
-            yield Request(url, callback=self.parse_item, metadata={'index': index})
+            # yield Request(url, callback=self.parse_item, metadata={'index': index})
+            yield Request(url, callback=self.parse_item, load_js=True, metadata={'index': index}).fetch()
 
     async def parse_item(self, response):
-        log.info("html->{}".format(response.html))
-        async for item in HitomiPageItem.get_items(html=response.html):
-            yield item
+        log.info("html->[{}]".format(response.html))
+        if response.html != '':
+            async for item in HitomiPageItem.get_items(html=response.html):
+                yield item
 
     async def process_item(self, item):
         log.info("titem->{}".format(item))
