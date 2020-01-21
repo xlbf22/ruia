@@ -25,10 +25,6 @@ class HackerNewsSpider(Spider):
     concurrency = 3
 
     async def parse(self, response):
-        for index, url in enumerate(self.start_urls):
-            yield Request(url, callback=self.parse_item, metadata={'index': index})
-
-    async def parse_item(self, response):
         async for item in FulibaPageItem.get_items(html=response.html):
             yield item
 
