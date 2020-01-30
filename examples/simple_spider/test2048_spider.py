@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 from ruia import Request, Spider, utils, Item, Middleware, AttrField, TextField
-import re, os, urllib
+import re, os, urllib, datetime
 
 log = utils.log.get_logger()
 
 fl_middleware = Middleware()
+
+str_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d')
 
 base_url = '''http://test2048.net/2048/'''
 base_path = '''/Users/mpauli/Desktop/caoliu'''
@@ -43,11 +45,13 @@ class CaoliuSpider(Spider):
             index += 1
             item.index = index
             yield item
+            if index > 3:
+                return
 
     async def process_item(self, item):
         # log.info("titem: {}".format(item))
         dirname = re.sub('[\/:*?"<>|]', '-', item.title)
-        path = base_path + '/' + dirname
+        path = base_path + '/[' + str_date + ']' + dirname
         if not os.path.exists(path):
             os.makedirs(path)
         filename = path+('/image%03d.' % item.index)+item.url.split(".")[-1]
