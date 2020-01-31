@@ -44,7 +44,7 @@ class CaoliuSpider(Spider):
             # if index > 1:
             #     return
             log.info("item.url={}".format(item.url))
-            yield Request(base_url+item.url, callback=self.parse_item, request_config={"RETRY_DELAY": 5})
+            yield Request(base_url+item.url, callback=self.parse_item)
 
     async def parse_item(self, response):
         log.info("parse 1")
@@ -65,7 +65,10 @@ class CaoliuSpider(Spider):
         opener = urllib.request.build_opener()
         opener.addheaders = [('User-Agent', ua)]
         urllib.request.install_opener(opener)
-        urllib.request.urlretrieve(item.url, filename=filename)
+        try:
+            urllib.request.urlretrieve(item.url, filename=filename)
+        except urllib.error.URLError as ex:
+            log.error("url->{}\n{}".format(item.url, ex))
 
 
 if __name__ == "__main__":
