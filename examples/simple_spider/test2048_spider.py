@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 from ruia import Request, Spider, utils, Item, Middleware, AttrField, TextField
-import re, os, urllib, datetime
+import re, os, urllib, datetime, socket
+
+socket.setdefaulttimeout(15)
 
 log = utils.log.get_logger()
 
@@ -64,10 +66,10 @@ class CaoliuSpider(Spider):
         log.info("{}".format({'filename': filename, 'url': item.url}))
         opener = urllib.request.build_opener()
         opener.addheaders = [('User-Agent', ua)]
-        urllib.request.install_opener(opener)
         try:
+            urllib.request.install_opener(opener)
             urllib.request.urlretrieve(item.url, filename=filename)
-        except urllib.error.URLError as ex:
+        except Exception as ex:
             log.error("url->{}\n{}".format(item.url, ex))
 
 
