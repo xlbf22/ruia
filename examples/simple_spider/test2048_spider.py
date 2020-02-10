@@ -28,7 +28,7 @@ class CaoliuPageItem(Item):
 
 
 class CaoliuBodyItem(Item):
-    target_item = TextField(xpath_select='//*[@id="read_tpc"]/img', default='')
+    target_item = TextField(xpath_select='//*[@id="read_tpc"]//img', default='')
     title = TextField(xpath_select='//*[@id="subject_tpc"]', default='')
     url = AttrField(xpath_select='.', attr='src', default='')
     index = 0
@@ -36,6 +36,7 @@ class CaoliuBodyItem(Item):
 
 class CaoliuSpider(Spider):
     start_urls = [base_url+'thread.php?fid-24.html']
+    # start_urls = [base_url+'thread.php?fid-24-page-4.html']
     concurrency = 3
 
     async def parse(self, response):
@@ -59,7 +60,7 @@ class CaoliuSpider(Spider):
     async def process_item(self, item):
         # log.info("titem: {}".format(item))
         dirname = re.sub('[\/:*?"<>|]', '-', item.title)
-        path = base_path + '/[' + str_date + ']' + dirname
+        path = base_path + '/' + str_date + '/' + dirname
         if not os.path.exists(path):
             os.makedirs(path)
         filename = path+('/image%03d.' % item.index)+item.url.split(".")[-1]
